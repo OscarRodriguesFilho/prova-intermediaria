@@ -31,7 +31,7 @@ O `ProdutoEventPublisher` é o sujeito observado. Ao criar ou excluir um produto
 
 ## Testes e cobertura
 
-`ProdutoServiceIT` é um teste de integração da camada de serviço. Ele usa PostgreSQL, cria e exclui um produto, e valida os dois eventos de auditoria persistidos.
+`ProdutoServiceIT` é um teste de integração da camada de serviço. Ele usa PostgreSQL, cria e exclui um produto, e valida os dois eventos de auditoria persistidos. `ProdutoControllerIT` chama a rota `POST /produtos` com `MockMvc` e valida a resposta HTTP `201 Created`.
 
 Execute localmente com um PostgreSQL disponível e as variáveis `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD` configuradas:
 
