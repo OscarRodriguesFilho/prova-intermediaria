@@ -21,14 +21,12 @@ ssh -o BatchMode=yes -o ConnectTimeout=10 -i $KeyPath "ubuntu@$HostName" `
     "sudo apt-get update && sudo apt-get install -y docker.io docker-compose-v2 && sudo systemctl enable --now docker && sudo usermod -aG docker ubuntu && sudo mkdir -p /home/ubuntu/prova-intermediaria && sudo chown ubuntu:ubuntu /home/ubuntu/prova-intermediaria"
 
 $securePassword = Read-Host 'Senha do PostgreSQL para o deploy' -AsSecureString
-$userApiBaseUrl = Read-Host 'URL da API externa de usuários'
 $passwordPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePassword)
 try {
     $dbPassword = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($passwordPointer)
     gh secret set HOST_TEST --repo $GitHubRepository --body $HostName
-    gh secret set KEY_TEST --repo $GitHubRepository --body-file $KeyPath
+    Get-Content -Raw -LiteralPath $KeyPath | gh secret set KEY_TEST --repo $GitHubRepository
     gh secret set DB_PASSWORD --repo $GitHubRepository --body $dbPassword
-    gh secret set USER_API_BASE_URL --repo $GitHubRepository --body $userApiBaseUrl
 }
 finally {
     [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($passwordPointer)

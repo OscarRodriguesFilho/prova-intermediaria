@@ -1,41 +1,50 @@
-# API de Tarefas
+# API de Produtos
 
-Projeto-base para uma prova de API REST com Spring Boot, PostgreSQL, testes e deploy automatizado.
+API REST para produtos de uma loja, com PostgreSQL, auditoria e alerta de estoque usando o padrão Observable.
 
-## API
+## Rotas
 
 | Método | Rota | Ação |
 | --- | --- | --- |
-| POST | `/tasks` | Cria uma tarefa |
-| GET | `/tasks` | Lista tarefas |
-| GET | `/tasks/{id}` | Busca uma tarefa |
-| PUT | `/tasks/{id}` | Atualiza uma tarefa |
-| DELETE | `/tasks/{id}` | Remove uma tarefa |
+| POST | `/produtos` | Cria um produto |
+| GET | `/produtos` | Lista produtos |
+| GET | `/produtos/{id}` | Busca um produto por id |
+| DELETE | `/produtos/{id}` | Exclui um produto |
 
-Exemplo de criação:
+Exemplo para criar um produto:
 
 ```json
 {
-  "title": "Estudar Spring Boot",
-  "description": "Revisar controllers e testes"
+  "nome": "Caderno",
+  "descricao": "Caderno universitário",
+  "preco": 19.90,
+  "quantidade": 5
 }
 ```
 
-## Testes
+## Observable
 
-- `TaskServiceTest`: testes unitários com repositório simulado.
-- `TaskRepositoryIT`: teste de integração com um PostgreSQL real.
+O `ProdutoEventPublisher` é o sujeito observado. Ao criar ou excluir um produto, ele publica um `ProdutoEvent` para os observers registrados pelo Spring:
 
-O comando `mvn verify` executa os dois grupos. No GitHub Actions, o PostgreSQL é iniciado como serviço temporário.
+- `AuditObserver`: grava na tabela `audit_event` o id do produto, o instante e a operação `CREATE` ou `DELETE`.
+- `LowStockObserver`: ao receber um evento `CREATE` cuja quantidade é menor que 10, registra um alerta de estoque baixo no log da aplicação.
 
-## Deploy na EC2
+## Testes e cobertura
 
-O workflow `.github/workflows/ci.yml` executa os testes em todo push e pull request. Em um push na `main`, após os testes passarem, transfere o projeto para a EC2 e executa Docker Compose. A API ficará na porta `8082` da EC2; o PostgreSQL fica isolado na rede Docker.
+`ProdutoServiceIT` é um teste de integração da camada de serviço. Ele usa PostgreSQL, cria e exclui um produto, e valida os dois eventos de auditoria persistidos.
 
-Antes do primeiro deploy, com o GitHub CLI autenticado, execute:
+Execute localmente com um PostgreSQL disponível e as variáveis `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD` configuradas:
 
 ```powershell
-.\scripts\bootstrap-aws.ps1 -GitHubRepository "SEU_USUARIO/prova-intermediaria"
+mvn verify
 ```
 
-O script instala Docker, prepara o diretório da EC2 e configura os secrets `HOST_TEST`, `KEY_TEST` e `DB_PASSWORD` no GitHub. Ele não abre portas no firewall.
+O JaCoCo gera o relatório em `target/site/jacoco/index.html`. O GitHub Actions inicia um PostgreSQL temporário e executa `mvn verify` em todo push e pull request.
+
+## Deploy
+
+Em um push na `main`, o GitHub Actions roda os testes e, se todos passarem, envia o projeto para a EC2 e inicia API e PostgreSQL com Docker Compose. A API publica a porta 8080:
+
+`http://ec2-44-197-175-105.compute-1.amazonaws.com:8080/produtos`
+
+Os secrets usados pelo workflow são `HOST_TEST`, `KEY_TEST` e `DB_PASSWORD`. Eles ficam em **Settings > Secrets and variables > Actions** do repositório, mas seus valores não podem ser visualizados depois de salvos.

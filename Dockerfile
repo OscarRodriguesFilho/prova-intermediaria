@@ -7,6 +7,6 @@ RUN mvn --batch-mode package -DskipTests
 
 FROM eclipse-temurin:25-jre
 WORKDIR /app
-COPY --from=builder /build/target/tarefas-api-*.jar app.jar
+COPY --from=builder /build/target/produtos-api-*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

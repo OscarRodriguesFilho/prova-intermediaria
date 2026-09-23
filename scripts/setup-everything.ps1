@@ -21,11 +21,10 @@ try {
     if (-not (Test-Path -LiteralPath '.git')) {
         git init --initial-branch=main
         git add .
-        git commit -m 'chore: estrutura inicial da API de tarefas'
+        git commit -m 'chore: estrutura inicial da API de produtos'
     }
 
-    $origin = git remote get-url origin 2>$null
-    if (-not $origin) {
+    if ((git remote) -notcontains 'origin') {
         gh repo create $GitHubRepository --private --source . --remote origin
     }
 

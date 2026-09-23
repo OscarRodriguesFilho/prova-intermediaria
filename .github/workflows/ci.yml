@@ -15,11 +15,11 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_DB: transacoes_test
-          POSTGRES_USER: transacoes_user
-          POSTGRES_PASSWORD: tasks_password
+          POSTGRES_DB: produtos_test
+          POSTGRES_USER: produtos_user
+          POSTGRES_PASSWORD: produtos_password
         options: >-
-          --health-cmd "pg_isready -U transacoes_user -d transacoes_test"
+          --health-cmd "pg_isready -U produtos_user -d produtos_test"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
@@ -28,9 +28,9 @@ jobs:
     env:
       DB_HOST: localhost
       DB_PORT: 5432
-      DB_NAME: transacoes_test
-      DB_USER: transacoes_user
-      DB_PASSWORD: tasks_password
+      DB_NAME: produtos_test
+      DB_USER: produtos_user
+      DB_PASSWORD: produtos_password
     steps:
       - name: Baixar código
         uses: actions/checkout@v4
@@ -68,4 +68,4 @@ jobs:
           key: ${{ secrets.KEY_TEST }}
           script: |
             cd /home/ubuntu/prova-intermediaria
-            sudo env DB_PASSWORD='${{ secrets.DB_PASSWORD }}' USER_API_BASE_URL='${{ secrets.USER_API_BASE_URL }}' docker compose up --detach --build --remove-orphans
+            sudo env DB_PASSWORD='${{ secrets.DB_PASSWORD }}' docker compose up --detach --build --remove-orphans

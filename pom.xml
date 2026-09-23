@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>br.edu.insper</groupId>
-    <artifactId>tarefas-api</artifactId>
+    <artifactId>produtos-api</artifactId>
     <version>1.0.0</version>
-    <name>Tarefas API</name>
+    <name>Produtos API</name>
 
     <properties>
         <java.version>25</java.version>
@@ -50,6 +50,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.15</version>
                 <executions>
                     <execution><goals><goal>prepare-agent</goal></goals></execution>
                     <execution><id>report</id><phase>verify</phase><goals><goal>report</goal></goals></execution>
