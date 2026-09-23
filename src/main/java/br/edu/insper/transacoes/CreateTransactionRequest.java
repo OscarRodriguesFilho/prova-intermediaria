@@ -1,1 +1,0 @@
-package br.edu.insper.transacoes; import jakarta.validation.constraints.*; import java.math.BigDecimal; import java.time.LocalDateTime; public record CreateTransactionRequest(@NotNull Long clientId,@NotBlank String stockCode,@NotNull @Positive Integer quantity,@NotNull @DecimalMin("0.01") BigDecimal unitPrice,@NotNull LocalDateTime transactedAt){}
