@@ -59,6 +59,7 @@ jobs:
           key: ${{ secrets.KEY_TEST }}
           source: "Dockerfile,docker-compose.yml,pom.xml,src"
           target: "/home/ubuntu/prova-intermediaria"
+          rm: true
       - name: Construir e iniciar os containers
         uses: appleboy/ssh-action@v1.2.2
         with:

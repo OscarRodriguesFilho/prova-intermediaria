@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>br.edu.insper</groupId>
-    <artifactId>transacoes-api</artifactId>
+    <artifactId>tarefas-api</artifactId>
     <version>1.0.0</version>
-    <name>Transações API</name>
+    <name>Tarefas API</name>
 
     <properties>
         <java.version>25</java.version>
