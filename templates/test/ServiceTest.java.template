@@ -1,0 +1,3 @@
+package br.edu.insper.seudominio;
+import org.junit.jupiter.api.Test;
+class NomeDaEntidadeServiceTest { @Test void testsBusinessRule() {} }

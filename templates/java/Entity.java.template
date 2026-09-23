@@ -1,0 +1,3 @@
+package br.edu.insper.seudominio;
+import jakarta.persistence.*;
+@Entity @Table(name = "nome_da_tabela") public class NomeDaEntidade { @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id; @Column(nullable = false) private String campoObrigatorio; protected NomeDaEntidade() {} }

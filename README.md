@@ -1,41 +1,20 @@
-# API de Tarefas
+# Template geral para prova de API
 
-Projeto-base para uma prova de API REST com Spring Boot, PostgreSQL, testes e deploy automatizado.
+Esta branch é uma base reutilizável para provas com Spring Boot, PostgreSQL, testes, Docker, GitHub Actions e deploy na EC2. A API de transações é apenas um exemplo funcional: durante a prova, adapte ou substitua o domínio `transacoes` sem alterar a infraestrutura.
 
-## API
+## O que já está pronto
 
-| Método | Rota | Ação |
-| --- | --- | --- |
-| POST | `/tasks` | Cria uma tarefa |
-| GET | `/tasks` | Lista tarefas |
-| GET | `/tasks/{id}` | Busca uma tarefa |
-| PUT | `/tasks/{id}` | Atualiza uma tarefa |
-| DELETE | `/tasks/{id}` | Remove uma tarefa |
+- PostgreSQL em Docker e configuração por variáveis de ambiente.
+- GitHub Actions: testes em push/PR e deploy após merge na `main`.
+- Secrets para host, chave SSH, banco e API externa.
+- Modelos de entidade, repositório, serviço e teste em `templates/`.
 
-Exemplo de criação:
+## Adaptação rápida
 
-```json
-{
-  "title": "Estudar Spring Boot",
-  "description": "Revisar controllers e testes"
-}
-```
+1. Copie um modelo de `templates/java` e implemente o domínio do enunciado.
+2. Adicione DTOs e controller para as rotas pedidas.
+3. Copie o modelo de teste e cubra as regras de negócio.
+4. Preserve `Dockerfile`, `docker-compose.yml` e `.github/workflows/ci.yml`.
+5. Abra uma PR para `main`; testes executam antes do merge e o deploy ocorre após o merge.
 
-## Testes
-
-- `TaskServiceTest`: testes unitários com repositório simulado.
-- `TaskRepositoryIT`: teste de integração com um PostgreSQL real.
-
-O comando `mvn verify` executa os dois grupos. No GitHub Actions, o PostgreSQL é iniciado como serviço temporário.
-
-## Deploy na EC2
-
-O workflow `.github/workflows/ci.yml` executa os testes em todo push e pull request. Em um push na `main`, após os testes passarem, transfere o projeto para a EC2 e executa Docker Compose. A API ficará na porta `8082` da EC2; o PostgreSQL fica isolado na rede Docker.
-
-Antes do primeiro deploy, com o GitHub CLI autenticado, execute:
-
-```powershell
-.\scripts\bootstrap-aws.ps1 -GitHubRepository "SEU_USUARIO/prova-intermediaria"
-```
-
-O script instala Docker, prepara o diretório da EC2 e configura os secrets `HOST_TEST`, `KEY_TEST` e `DB_PASSWORD` no GitHub. Ele não abre portas no firewall.
+Leia [o guia de adaptação](docs/COMO_ADAPTAR.md).

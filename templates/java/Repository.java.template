@@ -1,0 +1,3 @@
+package br.edu.insper.seudominio;
+import org.springframework.data.jpa.repository.JpaRepository;
+public interface NomeDaEntidadeRepository extends JpaRepository<NomeDaEntidade, Long> {}
