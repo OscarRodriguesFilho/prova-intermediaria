@@ -1,0 +1,70 @@
+name: CI e deploy
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Testes unitários e de integração
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: transacoes_test
+          POSTGRES_USER: transacoes_user
+          POSTGRES_PASSWORD: tasks_password
+        options: >-
+          --health-cmd "pg_isready -U transacoes_user -d transacoes_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 5432:5432
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: transacoes_test
+      DB_USER: transacoes_user
+      DB_PASSWORD: tasks_password
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+      - name: Configurar Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Executar testes
+        run: mvn --batch-mode verify
+
+  deploy:
+    name: Deploy na EC2
+    needs: tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+      - name: Transferir arquivos para a EC2
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST_TEST }}
+          username: ubuntu
+          key: ${{ secrets.KEY_TEST }}
+          source: "Dockerfile,docker-compose.yml,pom.xml,src"
+          target: "/home/ubuntu/prova-intermediaria"
+      - name: Construir e iniciar os containers
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.HOST_TEST }}
+          username: ubuntu
+          key: ${{ secrets.KEY_TEST }}
+          script: |
+            cd /home/ubuntu/prova-intermediaria
+            sudo env DB_PASSWORD='${{ secrets.DB_PASSWORD }}' USER_API_BASE_URL='${{ secrets.USER_API_BASE_URL }}' docker compose up --detach --build --remove-orphans
