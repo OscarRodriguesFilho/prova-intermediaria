@@ -4,7 +4,7 @@ services:
     container_name: prova-transacoes-api
     restart: unless-stopped
     ports:
-      - "8082:8080"
+      - "8080:8080"
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
